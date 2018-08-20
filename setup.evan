@@ -1,0 +1,8 @@
+wget http://dev.mysql.com/get/mysql-apt-config_0.6.0-1_all.deb
+sudo dpkg -i mysql-apt-config_0.6.0-1_all.deb
+sudo apt-get update
+sudo apt-get install python-pip python-dev libmysqlclient-dev
+sudo pip install mysqlclient
+sudo apt-get install mysql-server
+curl -o 10-dump.sql "https://s3.amazonaws.com/intranet-projects-files/holbertonschool-higher-level_programming+/290/10-hbnb_filters.sql"
+cat 10-dump.sql | sudo mysql -uroot
