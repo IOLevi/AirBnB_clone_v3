@@ -121,3 +121,5 @@ class test_DBStorage(unittest.TestCase):
             Test to check if storage is an instance for DBStorage
         '''
         self.assertTrue(isinstance(storage, DBStorage))
+
+
