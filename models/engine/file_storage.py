@@ -4,6 +4,7 @@
 '''
 import json
 import models
+from models.state import State
 
 
 class FileStorage:
@@ -18,16 +19,15 @@ class FileStorage:
             Return the dictionary
         '''
         new_dict = {}
-        if cls is None:
+        if cls is None or cls == "":
             return self.__objects
-
-        if cls != "":
+        else:
             for k, v in self.__objects.items():
                 if cls == k.split(".")[0]:
                     new_dict[k] = v
             return new_dict
-        else:
-            return self.__objects
+
+        
 
     def new(self, obj):
         '''
@@ -78,3 +78,20 @@ class FileStorage:
         Deserialize JSON file to objects
         '''
         self.reload()
+
+    def count(self, cls=None):
+        ''' counts all the instances of a class '''
+        return len(self.all(cls))
+
+
+    def get(self, cls, id):
+        ''' 
+        returns object based on class name and id. Otherwise none
+        cls: string representing the class name
+        id: string representing the object ID
+        '''
+        try:
+            return [a for a in self.all(cls).values() if a.id == id][0]
+        except IndexError:
+            return None
+
