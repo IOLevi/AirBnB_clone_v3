@@ -2,7 +2,7 @@ from flask import jsonify, request, Response, abort
 from api.v1.views import app_views
 from models import storage
 import json
-from models.place import Places
+from models.place import Place
 
 @app_views.route('cities/<city_id>/places', strict_slashes=False, methods=['GET'])
 def get_all_places(city_id):
@@ -43,7 +43,7 @@ def post_place(city_id):
     if 'user_id' not in kwargs:
         abort(400, 'Missing user_id')
     if 'name' not in kwargs:
-        abort(400. 'Missing name')
+        abort(400, 'Missing name')
     user = storage.get("User", kwargs['user_id'])
 
     if not user:
@@ -67,6 +67,6 @@ def update_place(place_id):
     if not place:
         abort(404)
     for k,v in params.items():
-        if k is not in ['id', 'user_id', 'city_id', 'create_at', 'updated_at' ]:
+        if k not in ['id', 'user_id', 'city_id', 'create_at', 'updated_at' ]:
             setattr(place, k, v)
-    return jsonify(params.to_dict()), 200
+    return jsonify(place.to_dict()), 200
