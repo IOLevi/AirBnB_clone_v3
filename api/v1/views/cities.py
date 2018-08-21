@@ -9,15 +9,10 @@ from models.city import City
 def get_states_cities(state_id):
     "returns cities with matching State id"
     s = storage.get("State", state_id)
-
     if not s:
         abort(404)
     else:
-        tmp = []
-        for city in s.cities: #where does cities become attached to states
-            tmp.append(city.to_dict())
-            
-        return jsonify(tmp)
+        return jsonify([city.to_dict() for city in s.cities])
 
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['GET'])
 def get_city(city_id):
@@ -45,17 +40,18 @@ def post_a_city(state_id):
     kwargs = request.get_json()
     state = storage.get("State", state_id)
 
-    # Do I add the state_id to the kwargs to integrate city and state?
-    if not kwargs:
+    if not state:
         abort(404)
-        abort(Response('Not a JSON'))
+
+    if not kwargs:
+        abort(400, 'Not a JSON')
 
     if 'name' not in kwargs:
-        abort(404)
-        abort(Response('Missing name'))
-
-    if 'state_id' not in kwargs:
-        kwargs['state_id'] = state_id
+        #abort(Response('Missing name'))
+        abort(400, 'Missing name')
+        
+    
+    kwargs['state_id'] = state_id #overwrites or adds w/ valid state_id in case they provide in post
 
     new_city = City(**kwargs)
     storage.new(new_city)
@@ -72,8 +68,7 @@ def update_a_city(city_id):
 
     new = request.get_json()
     if not new:
-        abort(404)
-        abort(Response('Not a JSON'))
+        abort(400, 'Not a JSON')
     
     for key, valuve in new.items():
         if key not in ['id', 'state_id', 'created_at', 'updated_at']:

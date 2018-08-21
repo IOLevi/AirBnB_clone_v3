@@ -40,12 +40,10 @@ def post_a_state():
     kwargs = request.get_json()
 
     if not kwargs:
-        abort(404)
-        abort(Response('Not a JSON'))
+        abort(400, 'Not a JSON'))
 
     if 'name' not in kwargs:
-        abort(404)
-        abort(Response('Missing name'))
+        abort(400, 'Missing name')
 
     new_state = State(**kwargs)#if this doesnt work, use json.load
     storage.new(new_state)
@@ -63,8 +61,7 @@ def update_a_state(state_id):
 
     new = request.get_json()
     if not new:
-        abort(404)
-        abort(Response('Not a JSON'))
+        abort(400, 'Not a JSON')
 
     for k, v in new.items():
         if k not in ['id', 'created_at', 'updated_at']:
