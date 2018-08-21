@@ -8,68 +8,68 @@ from models.state import State
 @app_views.route('/states', strict_slashes=False, methods=['GET'])
 def get_all_states():
     "returns all states"
-    a = storage.all("State").values()
+    states = storage.all("State").values()
 
-    return jsonify([b.to_dict() for b in a]) 
+    return jsonify([state.to_dict() for state in states]) 
 
 @app_views.route('/states/<string:state_id>', strict_slashes=False, methods=['GET'])
 def get_a_states(state_id):
     "returns a state by id"
-    a = storage.get("State", state_id)
+    state = storage.get("State", state_id)
 
-    if not a:
+    if not state:
         abort(404)
     else:
-        return jsonify(a.to_dict())
+        return jsonify(state.to_dict())
 
 @app_views.route('/states/<string:state_id>', strict_slashes=False, methods=['DELETE'])
 def delete_a_states(state_id):
     'deletes a state'
-    a = storage.get("State", state_id)
+    state = storage.get("State", state_id)
 
-    if not a:
+    if not state:
         abort(404)
     else:
-        storage.delete(a)
+        storage.delete(state)
         storage.save() #not sure if i need this
         return jsonify({}), 200
 
 @app_views.route('/states', strict_slashes=False, methods=['POST'])
 def post_a_state():
     "post a new state"
-    a = request.get_json()
+    kwargs = request.get_json()
 
-    if not a:
+    if not kwargs:
         abort(404)
         abort(Response('Not a JSON'))
 
-    if 'name' not in a:
+    if 'name' not in kwargs:
         abort(404)
         abort(Response('Missing name'))
 
-    b = State(**a)#if this doesnt work, use json.load
-    storage.new(b)
+    new_state = State(**kwargs)#if this doesnt work, use json.load
+    storage.new(new_state)
     storage.save()
-    return jsonify(b.to_dict()), 201
+    return jsonify(new_state.to_dict()), 201
 
 @app_views.route('/states/<string:state_id>', strict_slashes=False, methods=['PUT'])
 def update_a_state(state_id):
     "update a state with put"
 
-    a = storage.get("State", state_id)
+    state = storage.get("State", state_id)
 
-    if not a:
+    if not state:
         abort(404)
 
-    b = request.get_json()
-    if not b:
+    new = request.get_json()
+    if not new:
         abort(404)
         abort(Response('Not a JSON'))
 
-    for k, v in b.items():
+    for k, v in new.items():
         if k not in ['id', 'created_at', 'updated_at']:
-            setattr(a, k, v)
+            setattr(state, k, v)
 
     storage.save()
 
-    return jsonify(a.to_dict()), 200
+    return jsonify(state.to_dict()), 200
