@@ -40,7 +40,7 @@ def post_a_state():
     kwargs = request.get_json()
 
     if not kwargs:
-        abort(400, 'Not a JSON'))
+        abort(400, 'Not a JSON')
 
     if 'name' not in kwargs:
         abort(400, 'Missing name')
