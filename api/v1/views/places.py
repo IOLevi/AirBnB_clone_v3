@@ -87,4 +87,5 @@ def update_place(place_id):
     for k, v in params.items():
         if k not in ['id', 'user_id', 'city_id', 'create_at', 'updated_at']:
             setattr(place, k, v)
+    place.save()
     return jsonify(place.to_dict()), 200
