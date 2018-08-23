@@ -63,6 +63,8 @@ def post_review(place_id):
         abort(404)
 
     new_review = Review(**kwargs)
+    storage.add(new_review)
+    storage.save()
     return jsonify(new_review.to_dict()), 201
 
 
@@ -78,4 +80,5 @@ def update_review(review_id):
     for k, v in params.items():
         if k not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
             setattr(rev, k, v)
+    rev.save()
     return jsonify(rev.to_dict()), 200
