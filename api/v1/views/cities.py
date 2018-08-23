@@ -60,7 +60,7 @@ def post_a_city(state_id):
         abort(400, 'Not a JSON')
 
     if 'name' not in kwargs:
-        #abort(Response('Missing name'))
+        # abort(Response('Missing name'))
         abort(400, 'Missing name')
 
     # overwrites or adds w/ valid state_id in case they provide in post
