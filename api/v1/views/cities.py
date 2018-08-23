@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"Cities module"
 from flask import jsonify, request, Response, abort
 from api.v1.views import app_views
 from models import storage
@@ -21,6 +22,7 @@ def get_states_cities(state_id):
 
 @app_views.route('/cities/<city_id>', strict_slashes=False, methods=['GET'])
 def get_city(city_id):
+    "gets a city based on id"
     c = storage.get("City", city_id)
     if not c:
         abort(404)

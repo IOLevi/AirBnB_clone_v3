@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"App module"
 from flask import Flask, make_response, jsonify
 from models import storage
 from api.v1.views import app_views
@@ -19,6 +20,7 @@ def tear_down(self):
 
 @app.errorhandler(404)
 def not_found(error):
+    "error handler for 404"
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
