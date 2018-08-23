@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from flask import jsonify, request, Response, abort
 from api.v1.views import app_views
 from models import storage
@@ -10,9 +11,13 @@ def get_all_states():
     "returns all states"
     states = storage.all("State").values()
 
-    return jsonify([state.to_dict() for state in states]) 
+    return jsonify([state.to_dict() for state in states])
 
-@app_views.route('/states/<string:state_id>', strict_slashes=False, methods=['GET'])
+
+@app_views.route(
+    '/states/<string:state_id>',
+    strict_slashes=False,
+    methods=['GET'])
 def get_a_states(state_id):
     "returns a state by id"
     state = storage.get("State", state_id)
@@ -22,7 +27,11 @@ def get_a_states(state_id):
     else:
         return jsonify(state.to_dict())
 
-@app_views.route('/states/<string:state_id>', strict_slashes=False, methods=['DELETE'])
+
+@app_views.route(
+    '/states/<string:state_id>',
+    strict_slashes=False,
+    methods=['DELETE'])
 def delete_a_states(state_id):
     'deletes a state'
     state = storage.get("State", state_id)
@@ -31,8 +40,9 @@ def delete_a_states(state_id):
         abort(404)
     else:
         storage.delete(state)
-        storage.save() #not sure if i need this
+        storage.save()  # not sure if i need this
         return jsonify({}), 200
+
 
 @app_views.route('/states', strict_slashes=False, methods=['POST'])
 def post_a_state():
@@ -45,12 +55,16 @@ def post_a_state():
     if 'name' not in kwargs:
         abort(400, 'Missing name')
 
-    new_state = State(**kwargs)#if this doesnt work, use json.load
+    new_state = State(**kwargs)  # if this doesnt work, use json.load
     storage.new(new_state)
     storage.save()
     return jsonify(new_state.to_dict()), 201
 
-@app_views.route('/states/<string:state_id>', strict_slashes=False, methods=['PUT'])
+
+@app_views.route(
+    '/states/<string:state_id>',
+    strict_slashes=False,
+    methods=['PUT'])
 def update_a_state(state_id):
     "update a state with put"
 

@@ -1,8 +1,10 @@
+#!/usr/bin/python3
 from flask import jsonify, request, Response, abort
 from api.v1.views import app_views
 from models import storage
 import json
 from models.amenity import Amenity
+
 
 @app_views.route('/amenities', strict_slashes=False, methods=['GET'])
 def get_all_amenities():
@@ -11,7 +13,11 @@ def get_all_amenities():
 
     return jsonify([amenity.to_dict() for amenity in allAmenities])
 
-@app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['GET'])
+
+@app_views.route(
+    '/amenities/<amenity_id>',
+    strict_slashes=False,
+    methods=['GET'])
 def get_amenity(amenity_id):
     ''' returns amenity based on id'''
     amenity = storage.get("Amenity", amenity_id)
@@ -19,7 +25,11 @@ def get_amenity(amenity_id):
         abort(404)
     return jsonify(amenity.to_dict())
 
-@app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['DELETE'])
+
+@app_views.route(
+    '/amenities/<amenity_id>',
+    strict_slashes=False,
+    methods=['DELETE'])
 def delete_amenity(amenity_id):
     ''' deletes amenity based on id '''
     amenity = storage.get("Amenity", amenity_id)
@@ -28,6 +38,7 @@ def delete_amenity(amenity_id):
     storage.delete(amenity)
     storage.save()
     return jsonify({}), 200
+
 
 @app_views.route('/amenities/', strict_slashes=False, methods=['POST'])
 def post_new_amenity():
@@ -43,7 +54,11 @@ def post_new_amenity():
     storage.save()
     return jsonify(new_amenity.to_dict()), 201
 
-@app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['PUT'])
+
+@app_views.route(
+    '/amenities/<amenity_id>',
+    strict_slashes=False,
+    methods=['PUT'])
 def updates_amenity(amenity_id):
     ''' changes value of amenity '''
     new = request.get_json()
@@ -52,8 +67,8 @@ def updates_amenity(amenity_id):
         abort(404)
     if not new:
         abort(400, 'Not a JSON')
-    
-    for key,value in new.items():
+
+    for key, value in new.items():
         if key not in ['id', 'created_at', 'updated_at']:
             setattr(amenity, key, value)
     storage.save()

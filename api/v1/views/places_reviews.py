@@ -1,16 +1,22 @@
+#!/usr/bin/python3
 from flask import jsonify, request, Response, abort
 from api.v1.views import app_views
 from models import storage
 import json
 from models.review import Review
 
-@app_views.route('/places/<place_id>/reviews', strict_slashes=False, methods=['GET'])
+
+@app_views.route(
+    '/places/<place_id>/reviews',
+    strict_slashes=False,
+    methods=['GET'])
 def get_all_reviews(place_id):
     ''' gets all reviews of place '''
     place = storage.get("Place", place_id)
     if not place:
         abort(404)
     return jsonify([review.to_dict() for review in place.reviews])
+
 
 @app_views.route('/reviews/<review_id>', strict_slashes=False, methods=['GET'])
 def get_review(review_id):
@@ -20,7 +26,11 @@ def get_review(review_id):
         abort(404)
     return jsonify(rev.to_dict())
 
-@app_views.route('/reviews/<review_id>', strict_slashes=False, methods=['DELETE'])
+
+@app_views.route(
+    '/reviews/<review_id>',
+    strict_slashes=False,
+    methods=['DELETE'])
 def delete_review(review_id):
     ''' delete review based on id'''
     rev = storage.get("Review", review_id)
@@ -30,7 +40,11 @@ def delete_review(review_id):
     storage.save()
     return jsonify({}), 200
 
-@app_views.route('/places/<place_id>/reviews', strict_slashes=False, methods=['POST'])
+
+@app_views.route(
+    '/places/<place_id>/reviews',
+    strict_slashes=False,
+    methods=['POST'])
 def post_review(place_id):
     ''' post new review'''
     place = storage.get("Place", place_id)
@@ -50,6 +64,7 @@ def post_review(place_id):
     new_review = Review(**kwargs)
     return jsonify(new_review.to_dict()), 201
 
+
 @app_views.route('/reviews/<review_id>', strict_slashes=False, methods=['PUT'])
 def update_review(review_id):
     ''' update review '''
@@ -59,9 +74,7 @@ def update_review(review_id):
     params = request.get_json()
     if not params:
         abort(400, 'Not a JSON')
-    for k,v in params.items():
+    for k, v in params.items():
         if k not in ['id', 'user_id', 'place_id', 'created_at', 'updated_at']:
             setattr(rev, k, v)
     return jsonify(rev.to_dict()), 200
-
-    

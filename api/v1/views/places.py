@@ -1,17 +1,23 @@
+#!/usr/bin/python3
 from flask import jsonify, request, Response, abort
 from api.v1.views import app_views
 from models import storage
 import json
 from models.place import Place
 
-@app_views.route('cities/<city_id>/places', strict_slashes=False, methods=['GET'])
+
+@app_views.route(
+    'cities/<city_id>/places',
+    strict_slashes=False,
+    methods=['GET'])
 def get_all_places(city_id):
     ''' gets all places in a city '''
     city = storage.get("City", city_id)
     if not city:
         abort(404)
-    
-    return  jsonify([place.to_dict() for place in city.places])
+
+    return jsonify([place.to_dict() for place in city.places])
+
 
 @app_views.route('/places/<place_id>', strict_slashes=False, methods=['GET'])
 def get_place(place_id):
@@ -20,7 +26,11 @@ def get_place(place_id):
         abort(404)
     return jsonify(place.to_dict())
 
-@app_views.route('/places/<place_id>', strict_slashes=False, methods=['DELETE'])
+
+@app_views.route(
+    '/places/<place_id>',
+    strict_slashes=False,
+    methods=['DELETE'])
 def delete_place(place_id):
     ''' deletes places'''
     place = storage.get("Place", place_id)
@@ -30,7 +40,11 @@ def delete_place(place_id):
     storage.save()
     return jsonify({}), 200
 
-@app_views.route('/cities/<city_id>/places', strict_slashes=False, methods=['POST'])
+
+@app_views.route(
+    '/cities/<city_id>/places',
+    strict_slashes=False,
+    methods=['POST'])
 def post_place(city_id):
     '''posts a new place to city'''
     kwargs = request.get_json()
@@ -48,14 +62,16 @@ def post_place(city_id):
 
     if not user:
         abort(404)
-    
-    kwargs['city_id'] = city_id #overwrites or adds w/ valid state_id in case they provide in post
+
+    # overwrites or adds w/ valid state_id in case they provide in post
+    kwargs['city_id'] = city_id
 
     new_place = Place(**kwargs)
     storage.new(new_place)
     storage.save()
 
     return jsonify(new_place.to_dict()), 201
+
 
 @app_views.route('/places/<place_id>', strict_slashes=False, methods=['PUT'])
 def update_place(place_id):
@@ -66,7 +82,7 @@ def update_place(place_id):
     place = storage.get('Place', place_id)
     if not place:
         abort(404)
-    for k,v in params.items():
-        if k not in ['id', 'user_id', 'city_id', 'create_at', 'updated_at' ]:
+    for k, v in params.items():
+        if k not in ['id', 'user_id', 'city_id', 'create_at', 'updated_at']:
             setattr(place, k, v)
     return jsonify(place.to_dict()), 200
