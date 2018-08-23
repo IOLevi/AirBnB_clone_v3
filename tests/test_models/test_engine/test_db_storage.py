@@ -122,4 +122,24 @@ class test_DBStorage(unittest.TestCase):
         '''
         self.assertTrue(isinstance(storage, DBStorage))
 
+    def test_get_method(self):
+        ''' 
+        Test db get method works
+        '''
+        new_state = State(name="NewYork")
+        storage.new(new_state)
+        s = storage.get("State", new_state.id)
+        self.assertEqual(s.name, "NewYork")
+    
+    def test_count(self):
+        '''
+        Test db count method works
+        '''
+        new_state = State(name="NewYork")
+        storage.new(new_state)
+        count = storage.count("State")
+        self.assertNotEqual(count, 0)
+
+        
+
 
