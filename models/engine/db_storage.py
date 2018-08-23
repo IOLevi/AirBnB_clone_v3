@@ -102,5 +102,5 @@ class DBStorage:
         '''
         try:
             return [a for a in self.all(cls).values() if a.id == id][0]
-        except TypeError:
+        except (IndexError, TypeError):
             return None
