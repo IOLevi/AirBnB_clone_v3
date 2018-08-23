@@ -42,7 +42,7 @@ def deletes_city(city_id):
         abort(404)
     else:
         storage.delete(a)
-        storage.save()  # not sure if i need this
+        storage.save()
         return jsonify({}), 200
 
 
@@ -86,7 +86,7 @@ def update_a_city(city_id):
     if not new:
         abort(400, 'Not a JSON')
 
-    for key, valuve in new.items():
+    for key, value in new.items():
         if key not in ['id', 'state_id', 'created_at', 'updated_at']:
             setattr(city, key, value)
 

@@ -50,10 +50,11 @@ def delete_place(place_id):
 def post_place(city_id):
     '''posts a new place to city'''
     kwargs = request.get_json()
-    place = storage.get("City", city_id)
+    city = storage.get("City", city_id)
 
-    if not place:
+    if not city:
         abort(404)
+
     if not kwargs:
         abort(400, 'Not a JSON')
     if 'user_id' not in kwargs:
@@ -87,5 +88,4 @@ def update_place(place_id):
     for k, v in params.items():
         if k not in ['id', 'user_id', 'city_id', 'create_at', 'updated_at']:
             setattr(place, k, v)
-    place.save()
     return jsonify(place.to_dict()), 200
