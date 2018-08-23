@@ -3,7 +3,6 @@
 from flask import jsonify, request, Response, abort
 from api.v1.views import app_views
 from models import storage
-import json
 from models.place import Place
 
 
@@ -17,7 +16,7 @@ def get_all_places(city_id):
     if not city:
         abort(404)
 
-    return jsonify([place.to_dict() for place in city.places])
+    return jsonify([place.to_dict() for place in city.places]), 200
 
 
 @app_views.route('/places/<place_id>', strict_slashes=False, methods=['GET'])
@@ -26,7 +25,7 @@ def get_place(place_id):
     place = storage.get("Place", place_id)
     if not place:
         abort(404)
-    return jsonify(place.to_dict())
+    return jsonify(place.to_dict()), 200
 
 
 @app_views.route(
@@ -88,4 +87,5 @@ def update_place(place_id):
     for k, v in params.items():
         if k not in ['id', 'user_id', 'city_id', 'create_at', 'updated_at']:
             setattr(place, k, v)
+    storage.save()
     return jsonify(place.to_dict()), 200
