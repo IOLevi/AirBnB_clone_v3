@@ -43,27 +43,26 @@ def delete_place(place_id):
 def post_place(city_id):
     '''posts a new place to city'''
     kwargs = request.get_json()
-    city = storage.get("City", city_id)
-
-    if not city:
-        abort(404)
 
     if not kwargs:
         abort(400, 'Not a JSON')
-    if 'user_id' not in kwargs:
-        abort(400, 'Missing user_id')
-    if 'name' not in kwargs:
+    elif 'name' not in kwargs:
         abort(400, 'Missing name')
-    user = storage.get("User", kwargs['user_id'])
-
-    if not user:
-        abort(404)
+    elif 'user_id' not in kwargs:
+        abort(400, 'Missing user_id')
+    else:
+        city = storage.get("City", city_id)
+        user = storage.get("User", kwargs['user_id'])
+        if not city:
+            abort(404)
+        if not user:
+            abort(404)
 
     # overwrites or adds w/ valid state_id in case they provide in post
     kwargs['city_id'] = city_id
+    kwargs['user_id'] = user.id
 
     new_place = Place(**kwargs)
-    storage.new(new_place)
     storage.save()
 
     return jsonify(new_place.to_dict()), 201
